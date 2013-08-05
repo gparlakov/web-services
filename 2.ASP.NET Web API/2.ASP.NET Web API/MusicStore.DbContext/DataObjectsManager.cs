@@ -55,5 +55,30 @@ namespace MusicStore.SQLServerContext
 
             return album;
         }
+
+        public static Song GetOrCreateSong(Song song, MusicStoreDb musicStoreDbContext)
+        {
+            Song existingSong = null;
+
+            if (song.Id != 0)
+            {
+                existingSong = musicStoreDbContext.Songs.FirstOrDefault(s => s.Id == song.Id);
+            }
+            else if (song.Title != null)
+            {
+                existingSong = musicStoreDbContext.Songs.FirstOrDefault(s => s.Title == song.Title);
+            }
+
+            if (existingSong != null)
+            {
+                return existingSong;
+            }
+
+            musicStoreDbContext.Songs.Add(song);
+            musicStoreDbContext.SaveChanges();
+
+            return song;
+        }
+
     }
 }

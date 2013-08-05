@@ -26,7 +26,7 @@ namespace MusicStore.Api.Controllers
         // GET api/Albums/5
         public Album GetAlbum(int id)
         {
-            Album album = db.Albums.Find(id);
+            Album album = db.Albums.Include("Artists").Include("Songs").FirstOrDefault(al => al.Id == id);
             if (album == null)
             {
                 throw new HttpResponseException(Request.CreateResponse(HttpStatusCode.NotFound));
@@ -38,6 +38,8 @@ namespace MusicStore.Api.Controllers
         // PUT api/Albums/5
         public HttpResponseMessage PutAlbum(int id, Album album)
         {
+            //SyncronizeWithDb(album);
+
             if (!ModelState.IsValid)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
@@ -47,6 +49,8 @@ namespace MusicStore.Api.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest);
             }
+
+            
 
             db.Entry(album).State = EntityState.Modified;
 
@@ -65,6 +69,8 @@ namespace MusicStore.Api.Controllers
         // POST api/Albums
         public HttpResponseMessage PostAlbum(Album album)
         {
+            //SyncronizeWithDb(album);
+
             if (ModelState.IsValid)
             {
                 db.Albums.Add(album);
@@ -77,6 +83,32 @@ namespace MusicStore.Api.Controllers
             else
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
+            }
+        }
+
+        private void SyncronizeWithDb(Album album)
+        {
+
+            if (album.Artists != null && album.Artists.Count > 0)
+            {
+                var addedArtists = new List<Artist>();
+                foreach (var artist in album.Artists)
+                {
+                    addedArtists.Add(DataObjectsManager.GetOrCreateArtist(artist, db));
+                }
+
+                album.Artists = addedArtists;
+            }
+
+            if (album.Songs != null && album.Songs.Count > 0)
+            {
+                var addedSongs = new List<Song>();
+                foreach (var song in album.Songs)
+                {
+                    addedSongs.Add(DataObjectsManager.GetOrCreateSong(song, db));
+                }
+
+                album.Songs = addedSongs;
             }
         }
 
