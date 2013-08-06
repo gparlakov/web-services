@@ -60,6 +60,8 @@ namespace MusicStore.SQLServerContext
         {
             Song existingSong = null;
 
+            song.Artist = GetOrCreateArtist(song.Artist, musicStoreDbContext);
+
             if (song.Id != 0)
             {
                 existingSong = musicStoreDbContext.Songs.FirstOrDefault(s => s.Id == song.Id);
@@ -79,6 +81,5 @@ namespace MusicStore.SQLServerContext
 
             return song;
         }
-
     }
 }

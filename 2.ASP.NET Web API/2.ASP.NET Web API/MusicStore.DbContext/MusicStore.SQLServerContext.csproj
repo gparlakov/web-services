@@ -33,6 +33,10 @@
     <Reference Include="EntityFramework">
       <HintPath>..\packages\EntityFramework.5.0.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Newtonsoft.Json.5.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -45,6 +49,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataObjectsManager.cs" />
+    <Compile Include="Migrations\201308062315464_AddIndexes.cs" />
+    <Compile Include="Migrations\201308062315464_AddIndexes.Designer.cs">
+      <DependentUpon>201308062315464_AddIndexes.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="MusicStoreDb.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -58,6 +66,11 @@
       <Project>{5305318b-37b7-409c-9036-5f0717435013}</Project>
       <Name>MusicStore.Models</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201308062315464_AddIndexes.resx">
+      <DependentUpon>201308062315464_AddIndexes.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

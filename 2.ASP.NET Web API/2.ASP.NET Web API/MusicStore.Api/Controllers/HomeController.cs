@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace MusicStore.Api.Controllers
+namespace MusicStore.ApiWorking.Controllers
 {
     public class HomeController : Controller
     {

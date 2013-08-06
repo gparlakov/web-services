@@ -11,7 +11,7 @@ namespace MusicStore.Models
         [Required]
         public virtual Artist Artist { get; set; }
 
-        [Required]
+        [Required, MaxLength(150)]
         public string Title { get; set; }
 
         public int Year { get; set; }

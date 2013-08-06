@@ -38,8 +38,6 @@ namespace MusicStore.Api.Controllers
         // PUT api/Albums/5
         public HttpResponseMessage PutAlbum(int id, Album album)
         {
-            //SyncronizeWithDb(album);
-
             if (!ModelState.IsValid)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
@@ -48,9 +46,7 @@ namespace MusicStore.Api.Controllers
             if (id != album.Id)
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest);
-            }
-
-            
+            }            
 
             db.Entry(album).State = EntityState.Modified;
 
@@ -69,8 +65,6 @@ namespace MusicStore.Api.Controllers
         // POST api/Albums
         public HttpResponseMessage PostAlbum(Album album)
         {
-            //SyncronizeWithDb(album);
-
             if (ModelState.IsValid)
             {
                 db.Albums.Add(album);
