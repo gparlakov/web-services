@@ -71,7 +71,14 @@ namespace MusicStore.Api.Controllers
             if (ModelState.IsValid)
             {
                 db.Artists.Add(artist);
-                db.SaveChanges();
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch (DbUpdateException ex)
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.Conflict, ex);
+                }
 
                 HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created, artist);
                 response.Headers.Location = new Uri(Url.Link("DefaultApi", new { id = artist.Id }));
