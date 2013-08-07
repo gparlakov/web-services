@@ -17,10 +17,15 @@ namespace MusicStore.Api.Controllers
     {
         private MusicStoreDb db = new MusicStoreDb();
 
-        // GET api/Albums
-        public IEnumerable<Album> GetAlbums()
+        public AlbumsController()
         {
-            return db.Albums.AsEnumerable();
+            db.Configuration.ProxyCreationEnabled = false;
+        }
+
+        // GET api/Albums
+        public IQueryable<Album> GetAlbums()
+        {
+            return db.Albums.Include("Songs").Include("Artists").AsQueryable();
         }
 
         // GET api/Albums/5
@@ -67,6 +72,8 @@ namespace MusicStore.Api.Controllers
         {
             if (ModelState.IsValid)
             {
+                SyncronizeWithDb(album);                
+                
                 db.Albums.Add(album);
                 db.SaveChanges();
 
@@ -79,33 +86,7 @@ namespace MusicStore.Api.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
             }
         }
-
-        private void SyncronizeWithDb(Album album)
-        {
-
-            if (album.Artists != null && album.Artists.Count > 0)
-            {
-                var addedArtists = new List<Artist>();
-                foreach (var artist in album.Artists)
-                {
-                    addedArtists.Add(DataObjectsManager.GetOrCreateArtist(artist, db));
-                }
-
-                album.Artists = addedArtists;
-            }
-
-            if (album.Songs != null && album.Songs.Count > 0)
-            {
-                var addedSongs = new List<Song>();
-                foreach (var song in album.Songs)
-                {
-                    addedSongs.Add(DataObjectsManager.GetOrCreateSong(song, db));
-                }
-
-                album.Songs = addedSongs;
-            }
-        }
-
+            
         // DELETE api/Albums/5
         public HttpResponseMessage DeleteAlbum(int id)
         {
@@ -128,7 +109,6 @@ namespace MusicStore.Api.Controllers
 
             return Request.CreateResponse(HttpStatusCode.OK, album);
         }
-
 
         // POST api/Albums/AddArtist/5
         [HttpPost]
@@ -156,6 +136,32 @@ namespace MusicStore.Api.Controllers
         {
             db.Dispose();
             base.Dispose(disposing);
+        }
+
+        private void SyncronizeWithDb(Album album)
+        {
+
+            if (album.Artists != null && album.Artists.Count > 0)
+            {
+                var addedArtists = new List<Artist>();
+                foreach (var artist in album.Artists)
+                {
+                    addedArtists.Add(DataObjectsManager.GetOrCreateArtist(artist, db));
+                }
+
+                album.Artists = addedArtists;
+            }
+
+            if (album.Songs != null && album.Songs.Count > 0)
+            {
+                var addedSongs = new List<Song>();
+                foreach (var song in album.Songs)
+                {
+                    addedSongs.Add(DataObjectsManager.GetOrCreateSong(song, db));
+                }
+
+                album.Songs = addedSongs;
+            }
         }
     }
 }

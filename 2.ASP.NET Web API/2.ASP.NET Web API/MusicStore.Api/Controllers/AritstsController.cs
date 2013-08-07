@@ -10,6 +10,7 @@ using System.Web;
 using System.Web.Http;
 using MusicStore.Models;
 using MusicStore.SQLServerContext;
+using MusicStore.Api.Models;
 
 namespace MusicStore.Api.Controllers
 {
@@ -17,24 +18,53 @@ namespace MusicStore.Api.Controllers
     {
         private MusicStoreDb db = new MusicStoreDb();
 
+        public ArtistsController()
+        {
+            db.Configuration.ProxyCreationEnabled = false;
+        }
+
         // GET api/Aritsts
         [HttpGet]
-        public IQueryable<Artist> GetArtists()
+        public IEnumerable<ArtistDetails> GetArtists()
         {
-            return db.Artists.AsQueryable();
+            var artists = db.Artists.Select(a => new ArtistDetails 
+            {
+                Name = a.Name,
+                DateOfBirth = a.DateOfBirth,
+                Alias = a.Alias,
+                Country = a.Country,
+                Albums = a.Albums.Select(al => new AlbumsModel
+                {
+                    Title = al.Title
+                }),
+            }).AsEnumerable();
+
+            return artists;
         }
 
         // GET api/Aritsts/5
         [HttpGet]
-        public Artist GetArtist(int id)
+        public ArtistDetails GetArtist(int id)
         {
-            Artist artist = db.Artists.Find(id);
+            Artist artist = db.Artists.Include("Albums").FirstOrDefault(a => a.Id == id);
             if (artist == null)
             {
                 throw new HttpResponseException(Request.CreateResponse(HttpStatusCode.NotFound));
             }
 
-            return artist;
+            var artistDetails = new ArtistDetails
+            {
+                Name = artist.Name,
+                DateOfBirth = artist.DateOfBirth,
+                Alias = artist.Alias,
+                Country = artist.Country,
+                Albums = artist.Albums.Select(al => new AlbumsModel
+                {
+                    Title = al.Title
+                }).ToList()
+            };
+
+            return artistDetails;
         }
 
         // PUT api/Aritsts/5

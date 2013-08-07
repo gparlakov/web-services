@@ -15,15 +15,21 @@ namespace MusicStore.ConsoleClient
         {
             var getArtistsResponse = client.GetAsync("Artists").Result;
 
+            //client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("text/html"));
+
+            CheckStatus(getArtistsResponse);
+
             var artistsJson = getArtistsResponse.Content.ReadAsStringAsync().Result;
+
             var artists = JsonConvert.DeserializeObject<List<Artist>>(artistsJson);
 
             return artists;
         }
-
+  
         public static Artist Get(int id, HttpClient client)
         {
             var getArtistResponse = client.GetAsync("Artists/" + id).Result;
+            CheckStatus(getArtistResponse);
 
             var artistJson = getArtistResponse.Content.ReadAsStringAsync().Result;
             var artist = JsonConvert.DeserializeObject<Artist>(artistJson);
@@ -78,6 +84,14 @@ namespace MusicStore.ConsoleClient
             else
             {
                 Console.WriteLine(postArtist.ReasonPhrase);
+            }
+        }
+
+        private static void CheckStatus(HttpResponseMessage getArtistsResponse)
+        {
+            if (!getArtistsResponse.IsSuccessStatusCode)
+            {
+                throw new HttpRequestException(string.Format("There was an error in Http Response : {0}", getArtistsResponse.StatusCode));
             }
         }
     }

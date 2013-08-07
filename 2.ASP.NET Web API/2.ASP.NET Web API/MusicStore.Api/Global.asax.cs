@@ -21,7 +21,7 @@ namespace MusicStore.Api
         {
             //Database.SetInitializer(
             //   new MigrateDatabaseToLatestVersion<MusicStoreDb,
-            //       MusicStore.SQLServerContext.Migrations.Configuration>());       
+            //       MusicStore.SQLServerContext.Migrations.Configuration>());
             Database.SetInitializer(new DropCreateDatabaseIfModelChanges<MusicStoreDb>());
 
             AreaRegistration.RegisterAllAreas();
@@ -30,6 +30,10 @@ namespace MusicStore.Api
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            GlobalConfiguration.Configuration.Formatters.JsonFormatter
+                .SerializerSettings.ReferenceLoopHandling =
+                Newtonsoft.Json.ReferenceLoopHandling.Ignore;
         }
     }
 }

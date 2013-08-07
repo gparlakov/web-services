@@ -10,6 +10,7 @@ using System.Web;
 using System.Web.Http;
 using MusicStore.Models;
 using MusicStore.SQLServerContext;
+using MusicStore.Api.Models;
 
 namespace MusicStore.Api.Controllers
 {
@@ -17,22 +18,51 @@ namespace MusicStore.Api.Controllers
     {
         private MusicStoreDb db = new MusicStoreDb();
 
-        // GET api/Songs
-        public IEnumerable<Song> GetSongs()
+        public SongsController()
         {
-            return db.Songs.AsEnumerable();
+            db.Configuration.ProxyCreationEnabled = false;
+        }
+
+        // GET api/Songs
+        public IQueryable<SongDetails> GetSongs()
+        {
+            var songs = db.Songs.Select(s => new SongDetails
+            {
+                Title = s.Title,
+                Year = s.Year,
+                Genre = s.Genre,
+                Artist = new ArtistModel { Name = s.Artist.Name },
+                Albums = s.Albums.Select(al => new AlbumsModel
+                {
+                    Title = al.Title
+                }).ToList(),
+            });
+
+            return songs;
         }
 
         // GET api/Songs/5
-        public Song GetSong(int id)
+        public SongDetails GetSong(int id)
         {
-            Song song = db.Songs.Find(id);
+            Song song = db.Songs.Include("Artist").FirstOrDefault(s => s.Id == id);
             if (song == null)
             {
                 throw new HttpResponseException(Request.CreateResponse(HttpStatusCode.NotFound));
             }
 
-            return song;
+            var songDetails =  new SongDetails
+            {
+                Title = song.Title,
+                Year = song.Year,
+                Genre = song.Genre,
+                Artist = new ArtistModel { Name = song.Artist.Name },
+                Albums = song.Albums.Select(al => new AlbumsModel
+                {
+                    Title = al.Title
+                }).ToList(),
+            };
+
+            return songDetails;
         }
 
         // PUT api/Songs/5
@@ -92,7 +122,7 @@ namespace MusicStore.Api.Controllers
         // DELETE api/Songs/5
         public HttpResponseMessage DeleteSong(int id)
         {
-            Song song = db.Songs.Find(id);
+            Song song = db.Songs.FirstOrDefault(s => s.Id == id);
             if (song == null)
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound);
