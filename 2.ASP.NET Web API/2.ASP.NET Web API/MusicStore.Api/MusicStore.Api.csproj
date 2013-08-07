@@ -167,6 +167,12 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\AlbumsModel.cs" />
+    <Compile Include="Models\ArtistDetails.cs" />
+    <Compile Include="Models\ArtistModel.cs" />
+    <Compile Include="Models\SongDetails.cs" />
+    <Compile Include="Models\SongModel.cs" />
+    <!--</Compile>-->
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
