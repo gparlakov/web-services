@@ -77,6 +77,8 @@ namespace MusicStore.Api.Controllers
                 db.Albums.Add(album);
                 db.SaveChanges();
 
+                SyncSongs(album);
+
                 HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created, album);
                 response.Headers.Location = new Uri(Url.Link("DefaultApi", new { id = album.Id }));
                 return response;
@@ -86,7 +88,7 @@ namespace MusicStore.Api.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
             }
         }
-            
+
         // DELETE api/Albums/5
         public HttpResponseMessage DeleteAlbum(int id)
         {
@@ -126,7 +128,7 @@ namespace MusicStore.Api.Controllers
             var addedArtist = DataObjectsManager.GetOrCreateArtist(artist, db);
 
             album.Artists.Add(addedArtist);
-            db.SaveChanges();            
+            db.SaveChanges();
 
             return Request.CreateResponse(HttpStatusCode.OK);
         }
@@ -140,7 +142,6 @@ namespace MusicStore.Api.Controllers
 
         private void SyncronizeWithDb(Album album)
         {
-
             if (album.Artists != null && album.Artists.Count > 0)
             {
                 var addedArtists = new List<Artist>();
@@ -163,5 +164,15 @@ namespace MusicStore.Api.Controllers
                 album.Songs = addedSongs;
             }
         }
+
+        private void SyncSongs(Album album)
+        {
+            foreach (var song in album.Songs)
+            {
+                song.Albums.Add(album);
+            }
+            db.SaveChanges();
+        }
+            
     }
 }

@@ -29,6 +29,7 @@ namespace MusicStore.Api.Controllers
         {
             var artists = db.Artists.Select(a => new ArtistDetails 
             {
+                Id = a.Id,
                 Name = a.Name,
                 DateOfBirth = a.DateOfBirth,
                 Alias = a.Alias,
@@ -54,6 +55,7 @@ namespace MusicStore.Api.Controllers
 
             var artistDetails = new ArtistDetails
             {
+                Id = artist.Id,
                 Name = artist.Name,
                 DateOfBirth = artist.DateOfBirth,
                 Alias = artist.Alias,

@@ -24,10 +24,11 @@ namespace MusicStore.Api.Controllers
         }
 
         // GET api/Songs
-        public IQueryable<SongDetails> GetSongs()
+        public IEnumerable<SongDetails> GetSongs()
         {
             var songs = db.Songs.Select(s => new SongDetails
             {
+                Id = s.Id,
                 Title = s.Title,
                 Year = s.Year,
                 Genre = s.Genre,
@@ -35,7 +36,7 @@ namespace MusicStore.Api.Controllers
                 Albums = s.Albums.Select(al => new AlbumsModel
                 {
                     Title = al.Title
-                }).ToList(),
+                }),
             });
 
             return songs;
@@ -52,6 +53,7 @@ namespace MusicStore.Api.Controllers
 
             var songDetails =  new SongDetails
             {
+                Id = song.Id,
                 Title = song.Title,
                 Year = song.Year,
                 Genre = song.Genre,
