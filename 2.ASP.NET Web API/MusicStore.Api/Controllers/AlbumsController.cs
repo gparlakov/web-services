@@ -10,6 +10,7 @@ using System.Web;
 using System.Web.Http;
 using MusicStore.Models;
 using MusicStore.SQLServerContext;
+using MusicStore.Api.Models;
 
 namespace MusicStore.Api.Controllers
 {
@@ -23,21 +24,46 @@ namespace MusicStore.Api.Controllers
         }
 
         // GET api/Albums
-        public IQueryable<Album> GetAlbums()
+        public IQueryable<AlbumModel> GetAlbums()
         {            
-            return db.Albums.Include("Songs").Include("Artists").AsQueryable();
+            //Model of albums           
+            var model =  db.Albums.Select(a => new AlbumModel 
+            {
+                Id = a.Id,
+                Title = a.Title
+            }).AsQueryable();
+
+            return model;
         }
 
         // GET api/Albums/5
-        public Album GetAlbum(int id)
+        public AlbumDetails GetAlbum(int id)
         {
             Album album = db.Albums.Include("Artists").Include("Songs").FirstOrDefault(al => al.Id == id);
+
             if (album == null)
             {
                 throw new HttpResponseException(Request.CreateResponse(HttpStatusCode.NotFound));
             }
 
-            return album;
+            var albumDetails = new AlbumDetails 
+            {
+                Id = album.Id,
+                Title = album.Title,
+                Songs = album.Songs.Select(s => new SongModel
+                {
+                    Id = s.Id,
+                    Title = s.Title,
+                    Year = s.Year
+                }),
+                Artists = album.Artists.Select(a => new ArtistModel
+                {
+                    Id = a.Id,
+                    Name = a.Name
+                })
+            };
+
+            return albumDetails;
         }
 
         // PUT api/Albums/5

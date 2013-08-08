@@ -24,20 +24,14 @@ namespace MusicStore.Api.Controllers
         }
 
         // GET api/Songs
-        public IEnumerable<SongDetails> GetSongs()
+        public IEnumerable<SongModel> GetSongs()
         {
-            var songs = db.Songs.Select(s => new SongDetails
+            var songs = db.Songs.Select(s => new SongModel
             {
                 Id = s.Id,
                 Title = s.Title,
-                Year = s.Year,
-                Genre = s.Genre,
-                Artist = new ArtistModel { Name = s.Artist.Name },
-                Albums = s.Albums.Select(al => new AlbumsModel
-                {
-                    Title = al.Title
-                }),
-            });
+                Year = s.Year
+            }).AsEnumerable();
 
             return songs;
         }
@@ -58,7 +52,7 @@ namespace MusicStore.Api.Controllers
                 Year = song.Year,
                 Genre = song.Genre,
                 Artist = new ArtistModel { Name = song.Artist.Name },
-                Albums = song.Albums.Select(al => new AlbumsModel
+                Albums = song.Albums.Select(al => new AlbumModel
                 {
                     Title = al.Title
                 }).ToList(),

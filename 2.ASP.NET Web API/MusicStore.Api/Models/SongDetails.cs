@@ -7,20 +7,18 @@ namespace MusicStore.Api.Models
 {
     public class SongDetails : SongModel
     {
-        private IEnumerable<AlbumsModel> albums;
+        private IEnumerable<AlbumModel> albums;
 
         public SongDetails()
         {
-            this.albums = new List<AlbumsModel>();
-        }
-
-        public int Id { get; set; }
+            this.albums = new List<AlbumModel>();
+        }        
 
         public string Genre { get; set; }
 
         public ArtistModel Artist { get; set; }
 
-        public IEnumerable<AlbumsModel> Albums
+        public IEnumerable<AlbumModel> Albums
         {
             get { return albums; }
             set { albums = value; }

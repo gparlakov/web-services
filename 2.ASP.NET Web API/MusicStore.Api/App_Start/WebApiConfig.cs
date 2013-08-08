@@ -9,6 +9,9 @@ namespace MusicStore.Api
     {
         public static void Register(HttpConfiguration config)
         {
+            // allows requests from everywhere
+            config.EnableCors();
+
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
                 routeTemplate: "api/{controller}/{id}",

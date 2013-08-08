@@ -7,25 +7,21 @@ namespace MusicStore.Api.Models
 {
     public class ArtistDetails : ArtistModel
     {
-        private IEnumerable<AlbumsModel> albums;
+        private IEnumerable<AlbumModel> albums;
 
         public ArtistDetails()
         {
-            this.albums = new List<AlbumsModel>();            
+            this.albums = new List<AlbumModel>();            
         }
 
-        public IEnumerable<AlbumsModel> Albums
+        public IEnumerable<AlbumModel> Albums
         {
             get { return albums; }
             set { albums = value; }
-        }
-
-        public int Id { get; set; }
+        }       
 
         public DateTime? DateOfBirth { get; set; }
 
         public string Alias { get; set; }
-
-        public string Country { get; set; }
     }
 }
