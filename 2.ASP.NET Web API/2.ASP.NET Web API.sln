@@ -9,6 +9,28 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicStore.Api", "MusicStor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicStore.ConsoleClient", "MusicStore.ConsoleClient\MusicStore.ConsoleClient.csproj", "{2D13A1B6-7392-479B-9C4D-90A47098DE92}"
 EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "MusicStore.JSClient", "http://localhost:38469", "{EA18A836-3E17-4274-8CA0-22A0D8E2A541}"
+	ProjectSection(WebsiteProperties) = preProject
+		UseIISExpress = "true"
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.5"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_38469"
+		Debug.AspNetCompiler.PhysicalPath = "MusicStore.JSClient\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_38469\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_38469"
+		Release.AspNetCompiler.PhysicalPath = "MusicStore.JSClient\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_38469\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		SlnRelativePath = "MusicStore.JSClient\"
+		DefaultWebSiteLanguage = "Visual C#"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +53,10 @@ Global
 		{2D13A1B6-7392-479B-9C4D-90A47098DE92}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2D13A1B6-7392-479B-9C4D-90A47098DE92}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2D13A1B6-7392-479B-9C4D-90A47098DE92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA18A836-3E17-4274-8CA0-22A0D8E2A541}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA18A836-3E17-4274-8CA0-22A0D8E2A541}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA18A836-3E17-4274-8CA0-22A0D8E2A541}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA18A836-3E17-4274-8CA0-22A0D8E2A541}.Release|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
