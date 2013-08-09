@@ -27,14 +27,14 @@ namespace MusicStore.Api.Controllers
 
         // GET api/Aritsts
         [HttpGet]
-        public IEnumerable<ArtistModel> GetArtists()
+        public IQueryable<ArtistModel> GetArtists()
         {
             var artists = db.Artists.Select(a => new ArtistModel
             {
                 Id = a.Id,
                 Name = a.Name,   
                 Country = a.Country
-            }).AsEnumerable();
+            }).AsQueryable();
 
             return artists;
         }

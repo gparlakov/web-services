@@ -4,33 +4,115 @@
 /// <reference path="jquery-2.0.2.js" />
 /// <reference path="persister.js" />
 
-
-
 $(document).ready(function () {
-    var urlOfService = "http://localhost:49308/api/";
-    var dataPersister = persisters.get(urlOfService);
-
-    function errorFunction(error, holder) {
-        var message = $("<span>" + error.message + "</span>");
-
-        $(holder).add(message);
-    };
-
-    $("#get-all-artists").click(function () {
-        dataPersister.artists.getAll(function (artists) { 
-            var artistsString = "";
-
-            for (var i = 0; i < artists.length; i++) {
-                artistsString += "<span>" + artists[i].Name + "| </span>";
-            }
-
-            $("#artists-holder").html(artistsString);
+    $("#artists-holder").kendoGrid({
+        dataSource: {
+            //type: "odata",
+            transport: {
+                read: "http://localhost:49308/api/artists",
+                //destroy: {
+                //    url:"http://localhost:49308/api/artists/" + item.id,
+                //    type: "DELETE"
+                //},                
+            },
+            schema: {
+                model: {
+                    fields: {
+                        Name: { type: "string" }
+                        //OrderID: { type: "number" },
+                        //Freight: { type: "number" },
+                        //ShipName: { type: "string" },
+                        //OrderDate: { type: "date" },
+                        //ShipCity: { type: "string" }
+                    }
+                }
+            },
+            pageSize: 20,
+            serverPaging: true,
+            serverFiltering: true,
+            serverSorting: true
         },
-        function (error) {
-            errorFunction(error, "#artists-holder");
-        });
+        height: 430,
+        filterable: true,
+        sortable: true,
+        pageable: true,
+        columns: [{
+            field: "Name"
+        }, {
+            command: [{
+                name: "Get Details",
+                click: function (e) {
+                    //TODO get details command
+                }
+            } , {
+                name: "edit",
+                click: function (e) {
+                    alert("edit clicked");
+                }
+            },
+            "destroy",
+            ],
+
+            width: 350,
+            title: "Commands"
+        }],
+        editable: "inline",
     });
 });
+
+//$(document).ready(function () {    
+//    //var controller = controllers.get("http://localhost:49308/api/");
+
+//    var grid = $("#artists-holder").kendoGrid({
+//        //attributes: {
+//        //    width: "300px"
+//        //},
+//        type:"odata",
+//        transport: {
+//            read: "http://localhost:49308/api/Artists",
+//            //create: "",
+//            update: "",
+//            //destroy: "",
+//        },
+//        dataSource: {
+//            //data: artists,
+//            schema: {
+//                id: "Id",
+//                model: {
+//                    fields: {
+//                        Name: {type:"string"}
+//                    }
+//                }
+//            }
+//        },
+//        columns: [{
+//            field: "Name",
+//            width: 150,
+//            title: "Name",
+
+        //}, 
+//        ],
+//        toolbar: {
+
+//        },
+//        editable: "inline",
+
+//        pageable: {
+//            pageSize: 10,
+//            pageSizes: [5, 10, 20],
+//            refresh: true,
+//            messages: {
+//                refresh: "Refresh the grid"
+//            },
+//            //info: true,
+//            //buttons:5,
+//            //prevNext: true,                            
+//        },
+
+//        resizable: true,
+//    });
+
+//});
 
 //<script>
 //        var serviceUrl = "http://localhost:49308/api/";
@@ -49,3 +131,35 @@ $(document).ready(function () {
 //    console.log(error.message)
 //});
 //</script>
+
+//$(document).ready(function () {
+//    $("#grid").kendoGrid({
+//        dataSource: {
+//            type: "odata",
+//            transport: {
+//                read: "http://localhost:49308/api/api/Artists"
+//            },
+//            schema: {
+//                id: "Id",
+//                model: {                    
+//                    fields: {
+//                        Name: { type: "number" },                        
+//                    }
+//                }
+//            },
+//            pageSize: 20,
+//            serverPaging: true,
+//            serverFiltering: true,
+//            serverSorting: true
+//        },
+//        height: 430,
+//        filterable: true,
+//        sortable: true,
+//        pageable: true,
+//        columns: [{
+//            field: "Name",
+//            title: "Name",
+//            width:150
+//        }]
+//    });
+//});

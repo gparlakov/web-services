@@ -1,139 +1,126 @@
 ﻿/// <reference path="class.js" />
 /// <reference path="persister.js" />
-/// <reference path="jquery-2.0.2.js" />
+/// <reference path="jquery.min.js" />
+/// <reference path="kendo.web.js" />
 /// <reference path="ui.js" />
 
 var controllers = (function () {
 	var rootUrl = "http://localhost:40643/api/";
 	var Controller = Class.create({
-		init: function () {
-			this.persister = persisters.get(rootUrl);
-		},
-		loadUI: function (selector) {
-			if (this.persister.isUserLoggedIn()) {
-				this.loadGameUI(selector);
-			}
-			else {
-				this.loadLoginFormUI(selector);
-			}
-			this.attachUIEventHandlers(selector);
-		},
-		loadLoginFormUI: function (selector) {
-			var loginFormHtml = ui.loginForm()
-			$(selector).html(loginFormHtml);
-		},
-		loadGameUI: function (selector) {
-			var list =
-				ui.gameUI(this.persister.nickname());
-			$(selector).html(list);
 
+        // for VS Intellisence TODO - remove
+	    persister: {},
+	    artistsController: {},
 
-			this.persister.game.open(function (games) {
-				var list = ui.openGamesList(games);
-				$(selector + " #open-games")
-					.html(list);
-			});
+	    init: function (url) {
+	        this.persister = persisters.get(url);
+	        this.artistsController = artistsController.get(this.persister);
 
-			this.persister.game.myActive(function (games) {
-				var list = ui.activeGamesList(games);
-				$(selector + " #active-games")
-					.html(list);
-			});
-		},
-		loadGame: function (selector, gameId) {
-			this.persister.game.state(gameId, function (gameState) {
-				var gameHtml = ui.gameState(gameState);
-				$(selector + " #game-holder").html(gameHtml)
-			});
-		},
-		attachUIEventHandlers: function (selector) {
-			var wrapper = $(selector);
-			var self = this;
+	        this.initEvents();
+	    },
 
-			wrapper.on("click", "#btn-show-login", function () {
-				wrapper.find(".button.selected").removeClass("selected");
-				$(this).addClass("selected");
-				wrapper.find("#login-form").show();
-				wrapper.find("#register-form").hide();
-			});
-			wrapper.on("click", "#btn-show-register", function () {
-				wrapper.find(".button.selected").removeClass("selected");
-				$(this).addClass("selected");
-				wrapper.find("#register-form").show();
-				wrapper.find("#login-form").hide();
-			});
-
-			wrapper.on("click", "#btn-login", function () {			    
-			    var user = {
-					username: $(selector + " #tb-login-username").val(),
-					password: $(selector + " #tb-login-password").val()
-				}
-
-				self.persister.user.login(user, function () {
-					self.loadGameUI(selector);
-				}, function () {
-					wrapper.html("oh no..");
-				});
-				return false;
-			});
-			wrapper.on("click", "#btn-register", function () {
-
-			});
-			wrapper.on("click", "#btn-logout", function () {
-				self.persister.user.logout(function () {
-					self.loadLoginFormUI(selector);
-				});
-			});
-
-			wrapper.on("click", "#open-games-container a", function () {
-				$("#game-join-inputs").remove();
-				var html =
-					'<div id="game-join-inputs">' +
-						'Number: <input type="text" id="tb-game-number"/>' +
-						'Password: <input type="text" id="tb-game-pass"/>' +
-						'<button id="btn-join-game">join</button>' +
-					'</div>';
-				$(this).after(html);
-			});
-			wrapper.on("click", "#btn-join-game", function () {
-				var game = {
-					number: $("#tb-game-number").val(),
-					gameId: $(this).parents("li").first().data("game-id")
-				};
-
-				var password = $("#tb-game-pass").val();
-
-				if (password) {
-					game.password = password;
-				}
-				self.persister.game.join(game);
-			});
-			wrapper.on("click", "#btn-create-game", function () {
-				var game = {
-					title: $("#tb-create-title").val(),
-					number: $("#tb-create-number").val(),
-				}
-				var password = $("#tb-create-pass").val();
-				if (password) {
-					game.password = password;
-				}
-				self.persister.game.create(game);
-			});
-
-			wrapper.on("click", ".active-games .in-progress", function () {
-				self.loadGame(selector, $(this).parent().data("game-id"));
-			});
-		}
+	    initEvents: function () {
+	        //this.artistsController.init();
+	    },
 	});
+
 	return {
-		get: function () {
-			return new Controller();
+		get: function (url) {
+			return new Controller(url);
 		}
 	}
 }());
 
-$(function () {
-	var controller = controllers.get();
-	controller.loadUI("#content");
-	controller.init("http://localhost:40643/api/");
-});
+
+var artistsController = (function () {
+    var ArtistsController = Class.create({
+        init: function (persister) {
+            this.dataPersister = persister;
+
+            this.initEvents();
+        },
+        initEvents: function(){
+            var self = this;
+
+            $("#get-all-artists").click(function () {
+                self.dataPersister.artists.getAll(function (artists) {
+                    //var artistsString = "";
+
+                    //for (var i = 0; i < artists.length; i++) {
+                    //    artistsString += "<span data-id-" + artists[i].Id + ">" + artists[i].Name + "| </span>";
+                    //}
+
+                    $("#artists-holder").kendoGrid({
+                        //attributes: {
+                        //    width: "300px"
+                        //},
+                        transport: {
+                            read: {
+                                url: "http://localhost:40643/api/Artists",
+                                type: "json"
+                            },
+                            create: "",
+                            update: "",
+                            destroy: "",
+                        },
+                        dataSource: {
+                            data: artists,
+                            schema: {
+                                id:"Id",
+                            }
+                        },
+                        columns: [{
+                            field: "Name",
+                            width: 150,
+                            title: "Name",
+                            
+                            }, {
+                            command: [{
+                                name: "Get Details",
+                                click: function (e) {
+                                        //TODO get details command
+                                    }
+                                },
+                                "destroy",
+                                "edit"
+                            ],
+
+                                width:150
+                            }
+                        ],
+
+                        editable: "inline",
+
+                        pageable: {
+                            pageSize: 10,
+                            pageSizes:[5,10,20],                            
+                            refresh: true,
+                            messages: {
+                                refresh: "Refresh the grid"
+                            },
+                            //info: true,
+                            //buttons:5,
+                            //prevNext: true,                            
+                        },
+
+                        resizable: true,                       
+                    });
+                },
+                function (error) {
+                    self.errorFunction(error, "#artists-holder");
+                });
+            });
+        },
+        errorFunction: function (error, holder) {
+            var message = $("<span>" + error.message + "</span>");
+
+            $(holder).add(message);
+        }
+    });
+
+    return {
+        get: function(persister){
+            return new ArtistsController(persister);
+        }
+    }
+})();

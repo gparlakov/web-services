@@ -20,5 +20,6 @@ namespace MusicStore.SQLServerContext
         public DbSet<Artist> Artists { get; set; }
 
         public DbSet<Song> Songs { get; set; }
+               
     }
 }
