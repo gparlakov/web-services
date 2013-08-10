@@ -23,7 +23,7 @@ namespace MusicStore.Api
             //   new MigrateDatabaseToLatestVersion<MusicStoreDb,
             //       MusicStore.SQLServerContext.Migrations.Configuration>());
 
-            Database.SetInitializer(new DropCreateDatabaseIfModelChanges<MusicStoreDb>());
+            Database.SetInitializer(new CreateDatabaseIfNotExists<MusicStoreDb>());
 
             AreaRegistration.RegisterAllAreas();
 

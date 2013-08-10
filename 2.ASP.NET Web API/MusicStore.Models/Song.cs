@@ -19,11 +19,10 @@ namespace MusicStore.Models
         public int Year { get; set; }
 
         [Required, MaxLength(150)]
-        public string Title { get; set; }        
+        public string Title { get; set; }
 
         public string Genre { get; set; }
 
-        [Required]
         public virtual Artist Artist { get; set; }
 
         public virtual ICollection<Album> Albums

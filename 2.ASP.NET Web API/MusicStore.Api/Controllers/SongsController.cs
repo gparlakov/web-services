@@ -11,9 +11,11 @@ using System.Web.Http;
 using MusicStore.Models;
 using MusicStore.SQLServerContext;
 using MusicStore.Api.Models;
+using System.Web.Http.Cors;
 
 namespace MusicStore.Api.Controllers
 {
+    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class SongsController : ApiController
     {
         private MusicStoreDb db = new MusicStoreDb();
@@ -24,14 +26,14 @@ namespace MusicStore.Api.Controllers
         }
 
         // GET api/Songs
-        public IEnumerable<SongModel> GetSongs()
+        public IQueryable<SongModel> GetSongs()
         {
             var songs = db.Songs.Select(s => new SongModel
             {
                 Id = s.Id,
                 Title = s.Title,
-                Year = s.Year
-            }).AsEnumerable();
+                Year = s.Year,
+            }).AsQueryable();
 
             return songs;
         }
