@@ -14,11 +14,10 @@ namespace Students.WebServices.Controllers
     {
         private IRepository<Student> studentsRepository;
 
-        public StudentsController ()
-	    {
-            this.studentsRepository = 
-                new Repository.SqlRepository<Student>(new StudentsDb());
-	    }
+        public StudentsController(IRepository<Student> studentsRepository)
+        {
+            this.studentsRepository = studentsRepository;
+        }                
 
         // GET api/values
         [Queryable]
