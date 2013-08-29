@@ -13,9 +13,10 @@ namespace Students.WebServices.Areas.HelpPage
     /// </summary>
     public class XmlDocumentationProvider : IDocumentationProvider
     {
-        private XPathNavigator _documentNavigator;
         private const string MethodExpression = "/doc/members/member[@name='M:{0}']";
         private const string ParameterExpression = "param[@name='{0}']";
+
+        private readonly XPathNavigator _documentNavigator;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="XmlDocumentationProvider"/> class.
@@ -28,12 +29,12 @@ namespace Students.WebServices.Areas.HelpPage
                 throw new ArgumentNullException("documentPath");
             }
             XPathDocument xpath = new XPathDocument(documentPath);
-            _documentNavigator = xpath.CreateNavigator();
+            this._documentNavigator = xpath.CreateNavigator();
         }
 
         public virtual string GetDocumentation(HttpActionDescriptor actionDescriptor)
         {
-            XPathNavigator methodNode = GetMethodNode(actionDescriptor);
+            XPathNavigator methodNode = this.GetMethodNode(actionDescriptor);
             if (methodNode != null)
             {
                 XPathNavigator summaryNode = methodNode.SelectSingleNode("summary");
@@ -51,7 +52,7 @@ namespace Students.WebServices.Areas.HelpPage
             ReflectedHttpParameterDescriptor reflectedParameterDescriptor = parameterDescriptor as ReflectedHttpParameterDescriptor;
             if (reflectedParameterDescriptor != null)
             {
-                XPathNavigator methodNode = GetMethodNode(reflectedParameterDescriptor.ActionDescriptor);
+                XPathNavigator methodNode = this.GetMethodNode(reflectedParameterDescriptor.ActionDescriptor);
                 if (methodNode != null)
                 {
                     string parameterName = reflectedParameterDescriptor.ParameterInfo.Name;
@@ -61,18 +62,6 @@ namespace Students.WebServices.Areas.HelpPage
                         return parameterNode.Value.Trim();
                     }
                 }
-            }
-
-            return null;
-        }
-
-        private XPathNavigator GetMethodNode(HttpActionDescriptor actionDescriptor)
-        {
-            ReflectedHttpActionDescriptor reflectedActionDescriptor = actionDescriptor as ReflectedHttpActionDescriptor;
-            if (reflectedActionDescriptor != null)
-            {
-                string selectExpression = String.Format(CultureInfo.InvariantCulture, MethodExpression, GetMemberName(reflectedActionDescriptor.MethodInfo));
-                return _documentNavigator.SelectSingleNode(selectExpression);
             }
 
             return null;
@@ -107,6 +96,18 @@ namespace Students.WebServices.Areas.HelpPage
             }
 
             return type.FullName;
+        }
+
+        private XPathNavigator GetMethodNode(HttpActionDescriptor actionDescriptor)
+        {
+            ReflectedHttpActionDescriptor reflectedActionDescriptor = actionDescriptor as ReflectedHttpActionDescriptor;
+            if (reflectedActionDescriptor != null)
+            {
+                string selectExpression = String.Format(CultureInfo.InvariantCulture, MethodExpression, GetMemberName(reflectedActionDescriptor.MethodInfo));
+                return this._documentNavigator.SelectSingleNode(selectExpression);
+            }
+
+            return null;
         }
     }
 }

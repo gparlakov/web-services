@@ -19,10 +19,15 @@ namespace Students.Data
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Student>().HasKey(s => s.Id);
+            modelBuilder.Entity<Student>().Property(m => m.FirstName).IsRequired();
+            modelBuilder.Entity<Student>().Property(m => m.LastName).IsRequired();
+            
+            modelBuilder.Entity<Student>().Property(m => m.Grade).IsRequired();
 
             modelBuilder.Entity<School>().HasKey(s => s.Id).Property(s => s.Name).IsRequired();
 
-            modelBuilder.Entity<Mark>().HasKey(m => m.Id).Property(m => m.Value).IsRequired();            
+            modelBuilder.Entity<Mark>().HasKey(m => m.Id).Property(m => m.Value).IsRequired();
+
 
             base.OnModelCreating(modelBuilder);
         }

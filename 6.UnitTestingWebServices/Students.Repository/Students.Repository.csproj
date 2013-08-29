@@ -54,6 +54,7 @@
     <Compile Include="Interfaces\IStudentsRepository.cs" />
     <Compile Include="Interfaces\IRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SchoolsRepositories\SchoolsInSqlRepository.cs" />
     <Compile Include="StudentsRepositories\StudentsInMemoryRepoistory.cs" />
     <Compile Include="StudentsRepositories\StudentsInSQLRepository.cs" />
   </ItemGroup>

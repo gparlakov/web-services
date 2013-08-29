@@ -1,20 +1,19 @@
-@using System.Web.Http
-@using System.Web.Http.Description
 @using System.Collections.ObjectModel
-@using Students.WebServices.Areas.HelpPage.Models
+@using System.Web.Http.Description
+
 @model Collection<ApiDescription>
 
 @{
-    ViewBag.Title = "ASP.NET Web API Help Page";
-
+    this.ViewBag.Title = "ASP.NET Web API Help Page";
+    
     // Group APIs by controller
-    ILookup<string, ApiDescription> apiGroups = Model.ToLookup(api => api.ActionDescriptor.ControllerDescriptor.ControllerName);
+    ILookup<string, ApiDescription> apiGroups = this.Model.ToLookup(api => api.ActionDescriptor.ControllerDescriptor.ControllerName);
 }
 
 <header>
     <div class="content-wrapper">
         <div class="float-left">
-            <h1>@ViewBag.Title</h1>
+            <h1>@this.ViewBag.Title</h1>
         </div>
     </div>
 </header>
@@ -30,7 +29,7 @@
     <section class="content-wrapper main-content clear-fix">
         @foreach (var group in apiGroups)
         {
-            @Html.DisplayFor(m => group, "ApiGroup")
+            this.Html.DisplayFor(m => group, "ApiGroup");
         }
     </section>
 </div>

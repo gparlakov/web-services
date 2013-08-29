@@ -32,73 +32,7 @@ namespace Students.WebServices.Areas.HelpPage
         /// <returns>An object of the given type.</returns>
         public object GenerateObject(Type type)
         {
-            return GenerateObject(type, new Dictionary<Type, object>());
-        }
-
-        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Here we just want to return null if anything goes wrong.")]
-        private object GenerateObject(Type type, Dictionary<Type, object> createdObjectReferences)
-        {
-            try
-            {
-                if (SimpleTypeObjectGenerator.CanGenerateObject(type))
-                {
-                    return SimpleObjectGenerator.GenerateObject(type);
-                }
-
-                if (type.IsArray)
-                {
-                    return GenerateArray(type, DefaultCollectionSize, createdObjectReferences);
-                }
-
-                if (type.IsGenericType)
-                {
-                    return GenerateGenericType(type, DefaultCollectionSize, createdObjectReferences);
-                }
-
-                if (type == typeof(IDictionary))
-                {
-                    return GenerateDictionary(typeof(Hashtable), DefaultCollectionSize, createdObjectReferences);
-                }
-
-                if (typeof(IDictionary).IsAssignableFrom(type))
-                {
-                    return GenerateDictionary(type, DefaultCollectionSize, createdObjectReferences);
-                }
-
-                if (type == typeof(IList) ||
-                    type == typeof(IEnumerable) ||
-                    type == typeof(ICollection))
-                {
-                    return GenerateCollection(typeof(ArrayList), DefaultCollectionSize, createdObjectReferences);
-                }
-
-                if (typeof(IList).IsAssignableFrom(type))
-                {
-                    return GenerateCollection(type, DefaultCollectionSize, createdObjectReferences);
-                }
-
-                if (type == typeof(IQueryable))
-                {
-                    return GenerateQueryable(type, DefaultCollectionSize, createdObjectReferences);
-                }
-
-                if (type.IsEnum)
-                {
-                    return GenerateEnum(type);
-                }
-
-                if (type.IsPublic || type.IsNestedPublic)
-                {
-                    return GenerateComplexObject(type, createdObjectReferences);
-                }
-            }
-            catch
-            {
-                // Returns null if anything fails
-                return null;
-            }
-
-            return null;
+            return this.GenerateObject(type, new Dictionary<Type, object>());
         }
 
         private static object GenerateGenericType(Type type, int collectionSize, Dictionary<Type, object> createdObjectReferences)
@@ -187,13 +121,13 @@ namespace Students.WebServices.Areas.HelpPage
         private static bool IsTuple(Type genericTypeDefinition)
         {
             return genericTypeDefinition == typeof(Tuple<>) ||
-                genericTypeDefinition == typeof(Tuple<,>) ||
-                genericTypeDefinition == typeof(Tuple<,,>) ||
-                genericTypeDefinition == typeof(Tuple<,,,>) ||
-                genericTypeDefinition == typeof(Tuple<,,,,>) ||
-                genericTypeDefinition == typeof(Tuple<,,,,,>) ||
-                genericTypeDefinition == typeof(Tuple<,,,,,,>) ||
-                genericTypeDefinition == typeof(Tuple<,,,,,,,>);
+                   genericTypeDefinition == typeof(Tuple<,>) ||
+                   genericTypeDefinition == typeof(Tuple<,,>) ||
+                   genericTypeDefinition == typeof(Tuple<,,,>) ||
+                   genericTypeDefinition == typeof(Tuple<,,,,>) ||
+                   genericTypeDefinition == typeof(Tuple<,,,,,>) ||
+                   genericTypeDefinition == typeof(Tuple<,,,,,,>) ||
+                   genericTypeDefinition == typeof(Tuple<,,,,,,,>);
         }
 
         private static object GenerateKeyValuePair(Type keyValuePairType, Dictionary<Type, object> createdObjectReferences)
@@ -308,9 +242,8 @@ namespace Students.WebServices.Areas.HelpPage
 
         private static object GenerateCollection(Type collectionType, int size, Dictionary<Type, object> createdObjectReferences)
         {
-            Type type = collectionType.IsGenericType ?
-                collectionType.GetGenericArguments()[0] :
-                typeof(object);
+            Type type = collectionType.IsGenericType ? collectionType.GetGenericArguments()[0] :
+                        typeof(object);
             object result = Activator.CreateInstance(collectionType);
             MethodInfo addMethod = collectionType.GetMethod("Add");
             bool areAllElementsNull = true;
@@ -393,10 +326,87 @@ namespace Students.WebServices.Areas.HelpPage
             }
         }
 
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Here we just want to return null if anything goes wrong.")]
+        private object GenerateObject(Type type, Dictionary<Type, object> createdObjectReferences)
+        {
+            try
+            {
+                if (SimpleTypeObjectGenerator.CanGenerateObject(type))
+                {
+                    return this.SimpleObjectGenerator.GenerateObject(type);
+                }
+
+                if (type.IsArray)
+                {
+                    return GenerateArray(type, DefaultCollectionSize, createdObjectReferences);
+                }
+
+                if (type.IsGenericType)
+                {
+                    return GenerateGenericType(type, DefaultCollectionSize, createdObjectReferences);
+                }
+
+                if (type == typeof(IDictionary))
+                {
+                    return GenerateDictionary(typeof(Hashtable), DefaultCollectionSize, createdObjectReferences);
+                }
+
+                if (typeof(IDictionary).IsAssignableFrom(type))
+                {
+                    return GenerateDictionary(type, DefaultCollectionSize, createdObjectReferences);
+                }
+
+                if (type == typeof(IList) ||
+                    type == typeof(IEnumerable) ||
+                    type == typeof(ICollection))
+                {
+                    return GenerateCollection(typeof(ArrayList), DefaultCollectionSize, createdObjectReferences);
+                }
+
+                if (typeof(IList).IsAssignableFrom(type))
+                {
+                    return GenerateCollection(type, DefaultCollectionSize, createdObjectReferences);
+                }
+
+                if (type == typeof(IQueryable))
+                {
+                    return GenerateQueryable(type, DefaultCollectionSize, createdObjectReferences);
+                }
+
+                if (type.IsEnum)
+                {
+                    return GenerateEnum(type);
+                }
+
+                if (type.IsPublic || type.IsNestedPublic)
+                {
+                    return GenerateComplexObject(type, createdObjectReferences);
+                }
+            }
+            catch
+            {
+                // Returns null if anything fails
+                return null;
+            }
+
+            return null;
+        }
+
         private class SimpleTypeObjectGenerator
         {
-            private long _index = 0;
             private static readonly Dictionary<Type, Func<long, object>> DefaultGenerators = InitializeGenerators();
+
+            private long _index = 0;
+
+            public static bool CanGenerateObject(Type type)
+            {
+                return DefaultGenerators.ContainsKey(type);
+            }
+
+            public object GenerateObject(Type type)
+            {
+                return DefaultGenerators[type](++this._index);
+            }
 
             [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity", Justification = "These are simple type factories and cannot be split up.")]
             private static Dictionary<Type, Func<long, object>> InitializeGenerators()
@@ -410,46 +420,34 @@ namespace Students.WebServices.Areas.HelpPage
                     { typeof(DateTimeOffset), index => new DateTimeOffset(DateTime.Now) },
                     { typeof(DBNull), index => DBNull.Value },
                     { typeof(Decimal), index => (Decimal)index },
-                    { typeof(Double), index => (Double)(index + 0.1) },
+                    { typeof(Double), index => (index + 0.1) },
                     { typeof(Guid), index => Guid.NewGuid() },
                     { typeof(Int16), index => (Int16)(index % Int16.MaxValue) },
                     { typeof(Int32), index => (Int32)(index % Int32.MaxValue) },
-                    { typeof(Int64), index => (Int64)index },
+                    { typeof(Int64), index => index },
                     { typeof(Object), index => new object() },
                     { typeof(SByte), index => (SByte)64 },
                     { typeof(Single), index => (Single)(index + 0.1) },
-                    { 
-                        typeof(String), index =>
-                        {
-                            return String.Format(CultureInfo.CurrentCulture, "sample string {0}", index);
-                        }
+                    { typeof(String), index => {
+                                return String.Format(CultureInfo.CurrentCulture, "sample string {0}", index);
+                            }
                     },
-                    { 
-                        typeof(TimeSpan), index =>
-                        {
-                            return TimeSpan.FromTicks(1234567);
-                        }
+                    {
+                            typeof(TimeSpan), index =>
+                            {
+                                return TimeSpan.FromTicks(1234567);
+                            }
                     },
                     { typeof(UInt16), index => (UInt16)(index % UInt16.MaxValue) },
                     { typeof(UInt32), index => (UInt32)(index % UInt32.MaxValue) },
                     { typeof(UInt64), index => (UInt64)index },
-                    { 
-                        typeof(Uri), index =>
-                        {
-                            return new Uri(String.Format(CultureInfo.CurrentCulture, "http://webapihelppage{0}.com", index));
-                        }
+                    {
+                            typeof(Uri), index =>
+                            {
+                                return new Uri(String.Format(CultureInfo.CurrentCulture, "http://webapihelppage{0}.com", index));
+                            }
                     },
                 };
-            }
-
-            public static bool CanGenerateObject(Type type)
-            {
-                return DefaultGenerators.ContainsKey(type);
-            }
-
-            public object GenerateObject(Type type)
-            {
-                return DefaultGenerators[type](++_index);
             }
         }
     }

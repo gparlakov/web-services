@@ -1,99 +1,103 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using Students.Data;
 using Students.Models;
 using Students.Repository;
+using Students.WebServices.Models;
 
 namespace Students.WebServices.Controllers
 {
-    public class StudentsController : ApiController
+    public class StudentsController : BaseApiController
     {
-        private IRepository<Student> studentsRepository;
-
+        private readonly IRepository<Student> studentsRepository;
+        
         public StudentsController(IRepository<Student> studentsRepository)
         {
             this.studentsRepository = studentsRepository;
-        }                
+        }
 
-        // GET api/values
+        // GET api/students
         [Queryable]
         public IQueryable<StudentModel> Get()
         {
-            var students = this.studentsRepository.All().Select(s => new StudentModel 
+            return this.ProcessAndHandleExceptions(() =>
             {
-                FullName = (s.FirstName ?? "student") + " " + s.LastName,
-                Id = s.Id
-            });
+                var students = this.studentsRepository.All().Select(s => new StudentModel
+                {
+                    FullName = (s.FirstName ?? "student") + " " + s.LastName,
+                    Id = s.Id
+                });
 
-            return students;
+                return students;
+            });
         }
 
-        // GET api/values/5
+        // GET api/students/5
         public StudentDetails Get(int id)
         {
-            var student = this.studentsRepository.Get(id);
-            var marks = student.Marks.Select(m => m.Value).ToArray();
-
-            var averageMark = GetAverageMark(marks);
-
-            var studentDetails = new StudentDetails
+            return this.ProcessAndHandleExceptions(() => 
             {
-                Id = student.Id,
-                FirstName = student.FirstName,
-                LastName = student.LastName,
-                FullName = (student.FirstName ?? "student") + " " + student.LastName,
-                Grade = student.Grade,
-                Marks = marks,
-                AverageMark = averageMark
-            };
+                var student = this.studentsRepository.Get(id);
 
-            return studentDetails;
+                if (student == null)
+                {
+                    throw new InvalidOperationException(string.Format("No student with id = {0} found", id));
+                }
+
+                var studentDetails = new StudentDetails
+                {
+                    Id = student.Id,
+                    FirstName = student.FirstName,
+                    LastName = student.LastName,
+                    FullName = string.Format("{0} {1}", student.FirstName ?? "student", student.LastName),
+                    Grade = student.Grade,
+                };
+
+                return studentDetails;
+            });
         }
 
-        private static float GetAverageMark(float[] marks)
+        // GET api/students?subject=math&value=5.00
+        public IQueryable<StudentModel> Get(string subject, float value)
         {
-            if (marks.Length == 0)
+            return this.ProcessAndHandleExceptions(() =>
             {
-                return 0f;
-            }
-            var sumOfMarks = marks.Sum();
-            var countOfMarks = marks.Count();
+                var allStudents = this.studentsRepository.All();
+                var selectedStudents = allStudents
+                    .Where(s => s.Marks.Any(m => m.Subject == subject && m.Value >= value))
+                    .Select(s => new StudentModel
+                    {
+                        Id = s.Id,
+                        FullName = s.FirstName + " " + s.LastName
+                    });
 
-            var averageMark = ((float)sumOfMarks) / countOfMarks;
-            return averageMark;
+                return selectedStudents;
+            });
         }
 
         // POST api/values
-        public HttpResponseMessage Post([FromBody]Student student)
+        public HttpResponseMessage Post(Student student)
         {
-            //TODO - add modelstate checker or just student checker
-            if (student.LastName != null)
+            return this.ProcessAndHandleExceptions(() =>
             {
-                this.studentsRepository.Add(student);
+                student = this.studentsRepository.Add(student);
 
-                var response = Request.CreateResponse(HttpStatusCode.Created, student);
-                response.Headers.Location = new Uri(Url.Link("DefaultApi", new {id=student.Id} ));
+                var studentDetails = new StudentDetails
+                {
+                    Id = student.Id,
+                    FirstName = student.FirstName,
+                    LastName = student.LastName,
+                    FullName = student.FirstName + " " + student.LastName,
+                    Grade = student.Grade,
+                };
+
+                var response = this.Request.CreateResponse(HttpStatusCode.Created, studentDetails);
+                response.Headers.Location = new Uri(this.Url.Link("DefaultApi", new { id = student.Id }));
+
                 return response;
-            }
-            else
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest,
-                    "Model of student is not valid - LastName is Required");
-            }
+            });
         }
-
-        //// PUT api/values/5
-        //public void Put(int id, [FromBody]string value)
-        //{
-        //}
-
-        //// DELETE api/values/5
-        //public void Delete(int id)
-        //{
-        //}
     }
 }

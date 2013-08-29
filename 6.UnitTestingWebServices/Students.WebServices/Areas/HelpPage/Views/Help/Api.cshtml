@@ -1,22 +1,22 @@
-@using System.Web.Http
 @using Students.WebServices.Areas.HelpPage.Models
+
 @model HelpPageApiModel
 
 @{
-    var description = Model.ApiDescription;
-    ViewBag.Title = description.HttpMethod.Method + " " + description.RelativePath;
+    var description = this.Model.ApiDescription;
+    this.ViewBag.Title = string.Format("{0} {1}", description.HttpMethod.Method, description.RelativePath);
 }
 
 <div id="body">
     <section class="featured">
         <div class="content-wrapper">
             <p>
-                @Html.ActionLink("Help Page Home", "Index")
+                @this.Html.ActionLink("Help Page Home", "Index")
             </p>
         </div>
     </section>
     <section class="content-wrapper main-content clear-fix">
-        @Html.DisplayFor(m => Model)
+        @this.Html.DisplayFor(m => this.Model)
     </section>
 </div>
 

@@ -1,23 +1,19 @@
 ﻿using Students.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Students.Repository
 {
-    public class StudentsInSQLRepository : IStudentsRepository
+    public class StudentsInSqlRepository : IStudentsRepository
     {
         private const int MinNameLenght = 2;
         private const int MaxNameLenght = 50;
         private const int MaxGradeInSchool = 12;
         private const int MinGradeInSchool = 1;
 
-        private DbStudentsContextFactory dbContextFactory;
+        private readonly DbStudentsContextFactory dbContextFactory;
 
-        public StudentsInSQLRepository(DbStudentsContextFactory dbContextFactory)
+        public StudentsInSqlRepository(DbStudentsContextFactory dbContextFactory)
         {
             this.dbContextFactory = dbContextFactory;
         }
@@ -30,10 +26,10 @@ namespace Students.Repository
             
             GetOrCreateSchool(element, dbContext);
             
-            dbContext.Students.Add(element);
+            var addedElement = dbContext.Students.Add(element);
             dbContext.SaveChanges();
 
-            return element;
+            return addedElement;
         }
         
         public IQueryable<Student> All()
@@ -110,7 +106,7 @@ namespace Students.Repository
         {
             if (element == null)
             {
-                throw new ArgumentNullException("Student can't be null!");
+                throw new ArgumentNullException("Student","Student can't be null!");
             }
 
             ValidateName(element);
@@ -132,11 +128,11 @@ namespace Students.Repository
         {
             if (school == null)
             {
-                throw new ArgumentNullException("A student must have a school set!");
+                throw new ArgumentNullException("School.","A student must have a school!");
             }
             if (school.Name == null)
             {
-                throw new ArgumentNullException("A student' school must have a name!");
+                throw new ArgumentNullException("SchoolName","A student' school must have a name!");
             }
         }
 
@@ -144,7 +140,7 @@ namespace Students.Repository
         {
             if (element.FirstName == null || element.LastName == null)
             {
-                throw new ArgumentNullException("A student must have First and Last name");
+                throw new ArgumentNullException("First name and Last name","A student must have First and Last name");
             }
 
             if (element.FirstName.Length < MinNameLenght ||

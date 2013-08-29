@@ -20,6 +20,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Students.WebServices", "Stu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Students.RepositoriesTests", "Students.RepositoriesTests\Students.RepositoriesTests.csproj", "{517385FC-5D1B-4C59-9FA0-328A3B3D6CD7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Students.ControllerTests", "Students.ControllerTests\Students.ControllerTests.csproj", "{DF3F7EFE-989A-4A80-84D5-937A331F0CED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +52,10 @@ Global
 		{517385FC-5D1B-4C59-9FA0-328A3B3D6CD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{517385FC-5D1B-4C59-9FA0-328A3B3D6CD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{517385FC-5D1B-4C59-9FA0-328A3B3D6CD7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF3F7EFE-989A-4A80-84D5-937A331F0CED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF3F7EFE-989A-4A80-84D5-937A331F0CED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF3F7EFE-989A-4A80-84D5-937A331F0CED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF3F7EFE-989A-4A80-84D5-937A331F0CED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

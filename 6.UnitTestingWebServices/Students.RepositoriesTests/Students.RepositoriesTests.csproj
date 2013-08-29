@@ -58,8 +58,10 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="StudentsRepositoryInSqlTests.cs" />
+    <Compile Include="Helper.cs" />
+    <Compile Include="StudentsRepositoryInSqlTestsForAddMethod.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StudentsRepositoryInSqlTestsForAllMethod.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

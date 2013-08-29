@@ -8,7 +8,7 @@
 
 (function ($) {
     var data_click = "unobtrusiveAjaxClick",
-        data_validation = "unobtrusiveValidation";
+    data_validation = "unobtrusiveValidation";
 
     function getFunction(code, argNames) {
         var fn = window, parts = (code || "").split(".");
@@ -20,17 +20,17 @@
         }
         argNames.push(code);
         return Function.constructor.apply(null, argNames);
-    }
+    };
 
     function isMethodProxySafe(method) {
         return method === "GET" || method === "POST";
-    }
+    };
 
     function asyncOnBeforeSend(xhr, method) {
         if (!isMethodProxySafe(method)) {
             xhr.setRequestHeader("X-HTTP-Method-Override", method);
         }
-    }
+    };
 
     function asyncOnSuccess(element, data, contentType) {
         var mode;
@@ -44,23 +44,23 @@
             var top;
 
             switch (mode) {
-            case "BEFORE":
-                top = update.firstChild;
-                $("<div />").html(data).contents().each(function () {
-                    update.insertBefore(this, top);
-                });
-                break;
-            case "AFTER":
-                $("<div />").html(data).contents().each(function () {
-                    update.appendChild(this);
-                });
-                break;
-            default:
-                $(update).html(data);
-                break;
+                case "BEFORE":
+                    top = update.firstChild;
+                    $("<div />").html(data).contents().each(function () {
+                        update.insertBefore(this, top);
+                    });
+                    break;
+                case "AFTER":
+                    $("<div />").html(data).contents().each(function () {
+                        update.appendChild(this);
+                    });
+                    break;
+                default:
+                    $(update).html(data);
+                    break;
             }
         });
-    }
+    };
 
     function asyncRequest(element, options) {
         var confirm, loading, method, duration;
@@ -105,12 +105,12 @@
         }
 
         $.ajax(options);
-    }
+    };
 
     function validate(form) {
         var validationInfo = $(form).data(data_validation);
         return !validationInfo || !validationInfo.validate || validationInfo.validate();
-    }
+    };
 
     $(document).on("click", "a[data-ajax=true]", function (evt) {
         evt.preventDefault();
@@ -123,9 +123,9 @@
 
     $(document).on("click", "form[data-ajax=true] input[type=image]", function (evt) {
         var name = evt.target.name,
-            $target = $(evt.target),
-            form = $target.parents("form")[0],
-            offset = $target.offset();
+        $target = $(evt.target),
+        form = $target.parents("form")[0],
+        offset = $target.offset();
 
         $(form).data(data_click, [
             { name: name + ".x", value: Math.round(evt.pageX - offset.left) },
@@ -139,7 +139,7 @@
 
     $(document).on("click", "form[data-ajax=true] :submit", function (evt) {
         var name = evt.target.name,
-            form = $(evt.target).parents("form")[0];
+        form = $(evt.target).parents("form")[0];
 
         $(form).data(data_click, name ? [{ name: name, value: evt.target.value }] : []);
 

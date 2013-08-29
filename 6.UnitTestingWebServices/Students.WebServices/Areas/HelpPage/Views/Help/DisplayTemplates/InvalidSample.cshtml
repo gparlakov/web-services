@@ -1,10 +1,11 @@
 @using Students.WebServices.Areas.HelpPage
+
 @model InvalidSample
 
 @if (HttpContext.Current.IsDebuggingEnabled)
 {
     <div class="warning-message-container">
-        <p>@Model.ErrorMessage</p>
+        <p>@this.Model.ErrorMessage</p>
     </div>
 }
 else

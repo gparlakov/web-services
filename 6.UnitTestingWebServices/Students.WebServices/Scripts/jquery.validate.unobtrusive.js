@@ -8,40 +8,40 @@
 
 (function ($) {
     var $jQval = $.validator,
-        adapters,
-        data_validation = "unobtrusiveValidation";
+    adapters,
+    data_validation = "unobtrusiveValidation";
 
     function setValidationValues(options, ruleName, value) {
         options.rules[ruleName] = value;
         if (options.message) {
             options.messages[ruleName] = options.message;
         }
-    }
+    };
 
     function splitAndTrim(value) {
         return value.replace(/^\s+|\s+$/g, "").split(/\s*,\s*/g);
-    }
+    };
 
     function escapeAttributeValue(value) {
         // As mentioned on http://api.jquery.com/category/selectors/
         return value.replace(/([!"#$%&'()*+,./:;<=>?@\[\\\]^`{|}~])/g, "\\$1");
-    }
+    };
 
     function getModelPrefix(fieldName) {
         return fieldName.substr(0, fieldName.lastIndexOf(".") + 1);
-    }
+    };
 
     function appendModelPrefix(value, prefix) {
         if (value.indexOf("*.") === 0) {
             value = value.replace("*.", prefix);
         }
         return value;
-    }
+    };
 
     function onError(error, inputElement) {  // 'this' is the form element
         var container = $(this).find("[data-valmsg-for='" + escapeAttributeValue(inputElement[0].name) + "']"),
-            replaceAttrValue = container.attr("data-valmsg-replace"),
-            replace = replaceAttrValue ? $.parseJSON(replaceAttrValue) !== false : null;
+        replaceAttrValue = container.attr("data-valmsg-replace"),
+        replace = replaceAttrValue ? $.parseJSON(replaceAttrValue) !== false : null;
 
         container.removeClass("field-validation-valid").addClass("field-validation-error");
         error.data("unobtrusiveContainer", container);
@@ -53,11 +53,11 @@
         else {
             error.hide();
         }
-    }
+    };
 
     function onErrors(event, validator) {  // 'this' is the form element
         var container = $(this).find("[data-valmsg-summary=true]"),
-            list = container.find("ul");
+        list = container.find("ul");
 
         if (list && list.length && validator.errorList.length) {
             list.empty();
@@ -67,12 +67,12 @@
                 $("<li />").html(this.message).appendTo(list);
             });
         }
-    }
+    };
 
     function onSuccess(error) {  // 'this' is the form element
         var container = error.data("unobtrusiveContainer"),
-            replaceAttrValue = container.attr("data-valmsg-replace"),
-            replace = replaceAttrValue ? $.parseJSON(replaceAttrValue) : null;
+        replaceAttrValue = container.attr("data-valmsg-replace"),
+        replace = replaceAttrValue ? $.parseJSON(replaceAttrValue) : null;
 
         if (container) {
             container.addClass("field-validation-valid").removeClass("field-validation-error");
@@ -82,26 +82,26 @@
                 container.empty();
             }
         }
-    }
+    };
 
     function onReset(event) {  // 'this' is the form element
         var $form = $(this);
         $form.data("validator").resetForm();
         $form.find(".validation-summary-errors")
-            .addClass("validation-summary-valid")
-            .removeClass("validation-summary-errors");
+        .addClass("validation-summary-valid")
+        .removeClass("validation-summary-errors");
         $form.find(".field-validation-error")
-            .addClass("field-validation-valid")
-            .removeClass("field-validation-error")
-            .removeData("unobtrusiveContainer")
-            .find(">*")  // If we were using valmsg-replace, get the underlying error
-                .removeData("unobtrusiveContainer");
-    }
+        .addClass("field-validation-valid")
+        .removeClass("field-validation-error")
+        .removeData("unobtrusiveContainer")
+        .find(">*")  // If we were using valmsg-replace, get the underlying error
+        .removeData("unobtrusiveContainer");
+    };
 
     function validationInfo(form) {
         var $form = $(form),
-            result = $form.data(data_validation),
-            onResetProxy = $.proxy(onReset, form);
+        result = $form.data(data_validation),
+        onResetProxy = $.proxy(onReset, form);
 
         if (!result) {
             result = {
@@ -116,9 +116,9 @@
                 },
                 attachValidation: function () {
                     $form
-                        .unbind("reset." + data_validation, onResetProxy)
-                        .bind("reset." + data_validation, onResetProxy)
-                        .validate(this.options);
+                    .unbind("reset." + data_validation, onResetProxy)
+                    .bind("reset." + data_validation, onResetProxy)
+                    .validate(this.options);
                 },
                 validate: function () {  // a validation function that is called by unobtrusive Ajax
                     $form.validate();
@@ -129,7 +129,7 @@
         }
 
         return result;
-    }
+    };
 
     $jQval.unobtrusive = {
         adapters: [],
@@ -144,8 +144,8 @@
             /// If parsing several elements, you should specify false, and manually attach the validation
             /// to the form when you are finished. The default is false.</param>
             var $element = $(element),
-                form = $element.parents("form")[0],
-                valInfo, rules, messages;
+            form = $element.parents("form")[0],
+            valInfo, rules, messages;
 
             if (!form) {  // Cannot do client-side validation without a form
                 return;
@@ -157,8 +157,8 @@
 
             $.each(this.adapters, function () {
                 var prefix = "data-val-" + this.name,
-                    message = $element.attr(prefix),
-                    paramValues = {};
+                message = $element.attr(prefix),
+                paramValues = {};
 
                 if (message !== undefined) {  // Compare against undefined, because an empty message is legal (and falsy)
                     prefix += "-";
@@ -193,10 +193,10 @@
             /// </summary>
             /// <param name="selector" type="String">Any valid jQuery selector.</param>
             var $forms = $(selector)
-                .parents("form")
-                .andSelf()
-                .add($(selector).find("form"))
-                .filter("form");
+            .parents("form")
+            .andSelf()
+            .add($(selector).find("form"))
+            .filter("form");
 
             $(selector).find(":input[data-val=true]").each(function () {
                 $jQval.unobtrusive.parseElement(this, true);
@@ -263,7 +263,7 @@
         /// <returns type="jQuery.validator.unobtrusive.adapters" />
         return this.add(adapterName, [minAttribute || "min", maxAttribute || "max"], function (options) {
             var min = options.params.min,
-                max = options.params.max;
+            max = options.params.max;
 
             if (min && max) {
                 setValidationValues(options, minMaxRuleName, [min, max]);
@@ -320,9 +320,9 @@
     adapters.addMinMax("length", "minlength", "maxlength", "rangelength").addMinMax("range", "min", "max", "range");
     adapters.add("equalto", ["other"], function (options) {
         var prefix = getModelPrefix(options.element.name),
-            other = options.params.other,
-            fullOtherName = appendModelPrefix(other, prefix),
-            element = $(options.form).find(":input[name='" + escapeAttributeValue(fullOtherName) + "']")[0];
+        other = options.params.other,
+        fullOtherName = appendModelPrefix(other, prefix),
+        element = $(options.form).find(":input[name='" + escapeAttributeValue(fullOtherName) + "']")[0];
 
         setValidationValues(options, "equalTo", element);
     });
@@ -338,7 +338,7 @@
             type: options.params.type || "GET",
             data: {}
         },
-            prefix = getModelPrefix(options.element.name);
+        prefix = getModelPrefix(options.element.name);
 
         $.each(splitAndTrim(options.params.additionalfields || options.element.name), function (i, fieldName) {
             var paramName = appendModelPrefix(fieldName, prefix);
@@ -364,4 +364,4 @@
     $(function () {
         $jQval.unobtrusive.parse(document);
     });
-} (jQuery));
+}(jQuery));
